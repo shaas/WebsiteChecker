@@ -21,6 +21,13 @@ Configure:
     cp configuration.env .env
     vim .env # Make any changes needed
 
+Run:
+
+.. code-block:: bash
+
+    python3 websiteCheck.py # Runs the Kafka Producer and checks the websites
+    python3 websiteConsumer.py # Runs the Kafka Consumer and submits entries to the DB
+
 Test:
 
 .. code-block:: bash

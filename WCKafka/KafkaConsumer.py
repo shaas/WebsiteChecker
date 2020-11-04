@@ -4,8 +4,10 @@ from kafka import KafkaConsumer
 
 logger = logging.getLogger(__name__)
 
+
 class WcKafkaConsumer:
-    def __init__(self, bootstrap_servers, security_protocol, ssl_cafile, ssl_certfile, ssl_keyfile, topic):
+    def __init__(self, bootstrap_servers, security_protocol, ssl_cafile,
+                 ssl_certfile, ssl_keyfile, topic):
         self.bootstrap_servers = bootstrap_servers
         self.security_protocol = security_protocol
         self.ssl_cafile = ssl_cafile
@@ -13,7 +15,7 @@ class WcKafkaConsumer:
         self.ssl_keyfile = ssl_keyfile
         self.__consumer = None
         self.topic = topic
-    
+
     def __start_kafka_consumer(self):
         self.__consumer = KafkaConsumer(
             self.topic,

@@ -5,8 +5,10 @@ from kafka.admin import KafkaAdminClient, NewTopic
 
 logger = logging.getLogger(__name__)
 
+
 class WcKafkaProducer:
-    def __init__(self, bootstrap_servers, security_protocol, ssl_cafile, ssl_certfile, ssl_keyfile):
+    def __init__(self, bootstrap_servers, security_protocol, ssl_cafile,
+                 ssl_certfile, ssl_keyfile):
         self.bootstrap_servers = bootstrap_servers
         self.security_protocol = security_protocol
         self.ssl_cafile = ssl_cafile
@@ -17,12 +19,12 @@ class WcKafkaProducer:
     def __start_producer(self):
         try:
             self.__producer = KafkaProducer(
-                bootstrap_servers = self.bootstrap_servers,
-                security_protocol = self.security_protocol,
-                ssl_cafile = self.ssl_cafile,
-                ssl_certfile = self.ssl_certfile,
-                ssl_keyfile = self.ssl_keyfile,
-                api_version = (2,6,0),
+                bootstrap_servers=self.bootstrap_servers,
+                security_protocol=self.security_protocol,
+                ssl_cafile=self.ssl_cafile,
+                ssl_certfile=self.ssl_certfile,
+                ssl_keyfile=self.ssl_keyfile,
+                api_version=(2, 6, 0),
                 acks="all",
             )
         except Exception as ex:
@@ -50,15 +52,17 @@ class WcKafkaProducer:
     def create_topic(self, topic):
         try:
             admin_client = KafkaAdminClient(
-                bootstrap_servers = self.bootstrap_servers,
-                security_protocol = self.security_protocol,
-                ssl_cafile = self.ssl_cafile,
-                ssl_certfile = self.ssl_certfile,
-                ssl_keyfile = self.ssl_keyfile,    
+                bootstrap_servers=self.bootstrap_servers,
+                security_protocol=self.security_protocol,
+                ssl_cafile=self.ssl_cafile,
+                ssl_certfile=self.ssl_certfile,
+                ssl_keyfile=self.ssl_keyfile,
             )
             topic_list = []
-            topic_list.append(NewTopic(topic, num_partitions=1, replication_factor=1))
-            admin_client.create_topics(new_topics=topic_list,validate_only=False)
+            topic_list.append(NewTopic(topic, num_partitions=1,
+                                       replication_factor=1))
+            admin_client.create_topics(new_topics=topic_list,
+                                       validate_only=False)
             admin_client.close()
         except Exception as ex:
             logger.error("Could not create topic %s: %s", topic, str(ex))

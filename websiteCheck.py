@@ -16,9 +16,11 @@ lock_ws = threading.Lock()
 lock_threads = threading.Lock()
 websites = []
 
+
 def handler_int(signum, frame):
     logger.info("WebsiteCheck got interupted")
     sys.exit(0)
+
 
 def check_websites():
     global lock_ws, lock_threads, thread_running, num_threads, websites
@@ -26,17 +28,17 @@ def check_websites():
     num_threads += 1
     thread_running = True
     lock_threads.release()
-    bootstrap_servers=os.getenv("KAFKA_BOOTSTRAP_SERVER")
-    security_protocol=os.getenv("KAFKA_SECURITY_PROTOCOL")
-    ssl_cafile=os.getenv("KAFKA_SSL_CAFILE")
-    ssl_certfile=os.getenv("KAFKA_SSL_CERTFILE")
-    ssl_keyfile=os.getenv("KAFKA_SSL_KEYFILE")
+    bootstrap_servers = os.getenv("KAFKA_BOOTSTRAP_SERVER")
+    security_protocol = os.getenv("KAFKA_SECURITY_PROTOCOL")
+    ssl_cafile = os.getenv("KAFKA_SSL_CAFILE")
+    ssl_certfile = os.getenv("KAFKA_SSL_CERTFILE")
+    ssl_keyfile = os.getenv("KAFKA_SSL_KEYFILE")
 
     topic = os.getenv("WC_TOPIC")
 
     producer = KafkaProducer.WcKafkaProducer(bootstrap_servers,
-                        security_protocol, ssl_cafile, ssl_certfile,
-                        ssl_keyfile)
+                                             security_protocol, ssl_cafile,
+                                             ssl_certfile, ssl_keyfile)
 
     producer.create_topic(topic)
     while True:
@@ -52,6 +54,7 @@ def check_websites():
     num_threads -= 1
     lock_threads.release()
 
+
 def read_websites():
     global lock_ws, lock_threads, thread_running, num_threads, websites
     lock_threads.acquire()
@@ -66,13 +69,15 @@ def read_websites():
     lock_ws.release()
     lock_threads.acquire()
     num_threads -= 1
-    lock_threads.release() 
+    lock_threads.release()
+
 
 def main():
     load_dotenv(verbose=True)
     loglevel = getattr(logging, os.getenv("LOGLEVEL").upper())
     if not isinstance(loglevel, int):
-        print (f"{os.getenv('LOGLEVEL')} as LOGLEVEL is not valid. Using WARNING instead")
+        print(f"{os.getenv('LOGLEVEL')} as LOGLEVEL is not valid. "
+              "Using WARNING instead")
         loglevel = getattr(logging, "WARNING")
     logging.basicConfig(level=loglevel)
 
@@ -83,5 +88,6 @@ def main():
     checker_thread = threading.Thread(target=check_websites)
     reader_thread.start()
     checker_thread.start()
+
 
 main()
