@@ -1,0 +1,16 @@
+logging
+os
+signal
+sys
+pyyaml
+kafka
+dotenv
+psycopg2
+json_util
+requests
+BeautifulSoup
+re
+datetime
+hashlib
+threading
+time

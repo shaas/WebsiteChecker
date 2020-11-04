@@ -1,0 +1,15 @@
+KAFKA_BOOTSTRAP_SERVER="server"
+KAFKA_SECURITY_PROTOCOL="SSL"
+KAFKA_SSL_CAFILE=".crypt/ca.pem"
+KAFKA_SSL_CERTFILE=".crypt/service.cert"
+KAFKA_SSL_KEYFILE=".crypt/service.key"
+
+WC_DB_NAME="defaultdb"
+WC_DB_USER="user"
+WC_DB_HOST="host"
+WC_DB_PORT=11783
+WC_DB_PASSWORD="password"
+
+WC_TOPIC="WebsiteChecker"
+
+LOGLEVEL=INFO
