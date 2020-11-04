@@ -79,11 +79,13 @@ def read_websites():
 
     ws1 = website.Website("https://vpn.haas.works", regex="Werben")
     ws2 = website.Website("http://www.google.de", regex="Werben")
+    ws3 = website.Website("http://www.haribo.de")
 
     # website-list is safed with a lock to prevent simultaneous access
     lock_ws.acquire()
     websites.append(ws1)
     websites.append(ws2)
+    websites.append(ws3)
     lock_ws.release()
 
     lock_threads.acquire()
