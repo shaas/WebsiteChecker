@@ -7,6 +7,20 @@ logger = logging.getLogger(__name__)
 
 
 class WcKafkaProducer:
+    """A Kafka Producer client that publishes records to the Kafka cluster.
+
+    The producer is small abstraction of the original KafkaProducer which is
+    limited to the features needed for WebsiteChecker.
+
+    Keyword Arguments:
+        bootstrap_servers: 'host[:port]' string (or list of strings)
+        security_protocol (str): Protocol used to communicate with brokers.
+        ssl_cafile (str): filename of ca file to use in certificate
+            veriication.
+        ssl_certfile (str): filename of file in pem format containing
+            the client certificate.
+        ssl_keyfile (str): filename containing the client private key.
+    """
     def __init__(self, bootstrap_servers, security_protocol, ssl_cafile,
                  ssl_certfile, ssl_keyfile):
         self.bootstrap_servers = bootstrap_servers
@@ -32,6 +46,13 @@ class WcKafkaProducer:
         logger.info("KafkaProducer started")
 
     def send(self, topic, value):
+        """ Publish a message to the Kafka cluster.
+
+        Arguments:
+            topic (str): Name of the topic where the message belongs to.
+                NOTE: This topic must exist!
+            value (byte): Message to publish to to Kafka cluster.
+        """
         if not self.__producer:
             self.__start_producer()
         try:
@@ -41,6 +62,9 @@ class WcKafkaProducer:
         logger.debug("Kafka message sent")
 
     def flush(self):
+        """ Invoking this method makes all buffered records immediately
+        available to send.
+        """
         if not self.__producer:
             self.__start_producer()
         try:
@@ -50,6 +74,11 @@ class WcKafkaProducer:
         logger.debug("Kafka Producer got flushed")
 
     def create_topic(self, topic):
+        """ Creates a topic at Kafka.
+
+        Arguments:
+            topic (str): Name of the topic to create
+        """
         try:
             admin_client = KafkaAdminClient(
                 bootstrap_servers=self.bootstrap_servers,

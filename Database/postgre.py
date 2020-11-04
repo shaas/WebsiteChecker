@@ -2,6 +2,18 @@ import psycopg2
 
 
 class Database:
+    """ A PostgreSQL Database handler.
+
+    This database handler is limited to the features needed for
+    WebsiteChecker.
+
+    Keyword Arguments:
+        dbname (str): Name of the database
+        dbuser (str): Name of the database user
+        dbhost (str): Name of the database server
+        dbport (int): Number of the database server port
+        dbpass (str): Password of the database user
+    """
     def __init__(self, dbname, dbuser, dbhost, dbport, dbpass):
         self.con = None
         self.cursor = None
@@ -14,6 +26,14 @@ class Database:
         self.dbpass = dbpass
 
     def open_database(self, wstable, wsentries):
+        """ Opens the database and creates basic tables for WebsiteChecker
+
+        Arguments:
+            wstable (str): Name of the table which stores the relation of
+                website-url and a reproducible hash-value.
+            wsentries (str): Name of the table which stores all meassurements
+                of WebsiteChecker
+        """
         if not self.con:
             self.con = psycopg2.connect(database=self.dbname,
                                         user=self.dbuser, host=self.dbhost,
@@ -45,6 +65,17 @@ class Database:
 
     def add_entry(self, rep_hash, url, date, status, response_time,
                   regex_set=False, regex_found=False):
+        """ Adds a new entry to wsentries.
+
+        Arguments:
+            rep_hash (str): reproducible hash of website url
+            url (str): url of the website
+            date (int): timestamp of the measurement
+            status (int): status code of the website
+            response_time (float): response time of the website
+            regex_set (bool): Bool if website was checked of a regex
+            regex_found (bool): Bool if regex was found on website
+        """
         self.cursor.execute(f"SELECT * FROM {self.wstable} "
                             "WHERE RepHash = '{rep_hash}'")
         self.con.commit()
@@ -58,6 +89,8 @@ class Database:
         self.con.commit()
 
     def close_database(self):
+        """ Closes the database connection.
+        """
         if self.con:
             self.con.close()
             self.con = None
@@ -65,6 +98,8 @@ class Database:
             self.wstable = None
 
     def delete_tables(self):
+        """ Deletes all the tables created for WebsiteChecker.
+        """
         if self.wsentries:
             self.cursor.execute(f"DROP TABLE IF EXISTS {self.wsentries}")
             self.wsentries = None
