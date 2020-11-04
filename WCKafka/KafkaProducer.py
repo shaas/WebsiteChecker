@@ -2,6 +2,7 @@ import logging
 
 from kafka import KafkaProducer
 from kafka.admin import KafkaAdminClient, NewTopic
+from kafka.errors import TopicAlreadyExistsError
 
 logger = logging.getLogger(__name__)
 
@@ -43,6 +44,7 @@ class WcKafkaProducer:
             )
         except Exception as ex:
             logger.error("Could not start KafkaProducer: %s", str(ex))
+            raise Exception(ex)
         logger.info("KafkaProducer started")
 
     def send(self, topic, value):
@@ -59,6 +61,7 @@ class WcKafkaProducer:
             self.__producer.send(topic, value)
         except Exception as ex:
             logger.error("Kafka send failed: %s", str(ex))
+            raise Exception(ex)
         logger.debug("Kafka message sent")
 
     def flush(self):
@@ -71,6 +74,7 @@ class WcKafkaProducer:
             self.__producer.flush()
         except Exception as ex:
             logger.error("Kafka flush failed: %s", str(ex))
+            raise Exception(ex)
         logger.debug("Kafka Producer got flushed")
 
     def create_topic(self, topic):
@@ -93,5 +97,11 @@ class WcKafkaProducer:
             admin_client.create_topics(new_topics=topic_list,
                                        validate_only=False)
             admin_client.close()
+
+        except TopicAlreadyExistsError:
+            # we are fine if the Topic already exists
+            logger.info("Topic already exists")
+            pass
         except Exception as ex:
             logger.error("Could not create topic %s: %s", topic, str(ex))
+            raise Exception(ex)

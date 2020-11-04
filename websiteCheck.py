@@ -61,7 +61,7 @@ def check_websites():
         lock_ws.release()
         producer.flush()
         # measure every 10 seconds
-        time.sleep(os.getenv("POLL_INTERVALL"))
+        time.sleep(int(os.getenv("POLL_INTERVALL")))
 
     lock_threads.acquire()
     num_threads -= 1
