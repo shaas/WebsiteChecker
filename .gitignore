@@ -30,6 +30,7 @@ venv/
 ENV/
 my.env
 *.env
+.crypt
 
 # Spyder project settings
 .spyderproject

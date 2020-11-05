@@ -1,6 +1,6 @@
 from dotenv import load_dotenv
-from WebsiteChecker import website
-from WCKafka import KafkaProducer
+from WebsiteChecker.WCKafka import KafkaProducer
+from WebsiteChecker.Website import website
 
 import os
 import signal
@@ -9,7 +9,7 @@ import logging
 import time
 import threading
 
-logger = logging.getLogger("WebsiteCheck")
+logger = logging.getLogger(__name__)
 num_threads = 0
 thread_running = False
 # Lock for the Website-List

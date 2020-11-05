@@ -50,6 +50,7 @@ class Database:
                 self.cursor.execute(f"SELECT to_regclass('{wstable}')")
                 self.con.commit()
                 if not self.cursor.fetchone()[0]:
+                    logger.info("Creating website-table %s", wstable)
                     self.cursor.execute(f"CREATE TABLE {wstable} "
                                         "(RepHash CHAR(64)  PRIMARY KEY, "
                                         "Url VARCHAR(255) NOT NULL);")
@@ -63,13 +64,15 @@ class Database:
                 self.con.commit()
 
                 if not self.cursor.fetchone()[0]:
+                    logger.info("Creating results-table %s", wsentries)
                     self.cursor.execute(f"CREATE TABLE {wsentries} "
                                         "(RepHash CHAR(64) REFERENCES "
                                         f"{self.wstable} ON DELETE CASCADE, "
                                         "Date TIMESTAMP NOT NULL, "
                                         "Status SMALLINT NOT NULL, "
                                         "ResponseTime FLOAT NOT NULL, "
-                                        "RegexSet BOOLEAN, RegexFound BOOLEAN, "
+                                        "RegexSet BOOLEAN, "
+                                        "RegexFound BOOLEAN, "
                                         "PRIMARY KEY (RepHash, date));")
                     self.con.commit()
                 self.wsentries = wsentries
@@ -98,14 +101,16 @@ class Database:
             if not self.cursor.fetchone():
                 # insert new reproducible-hash <-> url relation
                 logger.info("New Entry for: %s", url)
-                self.cursor.execute(f"INSERT INTO {self.wstable} (RepHash, Url) "
+                self.cursor.execute(f"INSERT INTO {self.wstable} "
+                                    "(RepHash, Url) "
                                     f"VALUES ('{rep_hash}', '{url}')")
                 self.con.commit()
             # add measurment results to the table
-            self.cursor.execute(f"INSERT INTO {self.wsentries} (RepHash, Date, "
-                                "Status, ResponseTime, RegexSet, RegexFound) "
-                                f"VALUES ('{rep_hash}', '{date}', {status}, "
-                                f"{response_time}, {regex_set}, {regex_found})")
+            self.cursor.execute(f"INSERT INTO {self.wsentries} "
+                                "(RepHash, Date, Status, ResponseTime, "
+                                f"RegexSet, RegexFound) VALUES ('{rep_hash}', "
+                                f"'{date}', {status}, {response_time}, "
+                                f"{regex_set}, {regex_found})")
             self.con.commit()
         except Error as e:
             # unique_violation might happen on re-connect
@@ -139,7 +144,8 @@ class Database:
                 self.cursor.execute(f"DROP TABLE IF EXISTS {self.wsentries}")
                 self.wsentries = None
             if self.wstable:
-                self.cursor.execute(f"DROP TABLE IF EXISTS {self.wstable} CASCADE")
+                self.cursor.execute("DROP TABLE IF EXISTS "
+                                    f"{self.wstable} CASCADE")
                 self.wstable = None
             self.con.commit()
         except Error as e:

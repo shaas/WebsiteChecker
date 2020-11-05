@@ -1,6 +1,6 @@
 from dotenv import load_dotenv
-from WCKafka import KafkaConsumer
-from Database import postgre
+from WebsiteChecker.WCKafka import KafkaConsumer
+from WebsiteChecker.Database import postgre
 from datetime import datetime
 
 import logging
@@ -9,7 +9,7 @@ import signal
 import sys
 import yaml
 
-logger = logging.getLogger("WebsiteConsume")
+logger = logging.getLogger(__name__)
 
 database = None
 
